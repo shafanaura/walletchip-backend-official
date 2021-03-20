@@ -11,10 +11,13 @@ const { FILE_URL } = process.env;
 exports.getUserTransactionHistory = async (req, res) => {
   const userID = req.userData.id;
   const { page = 1, limit = 4 } = req.query;
+  const { from, to } = req.body;
 
   try {
     const startData = limit * page - limit;
     const results = await transactionsModel.getUserTransactionHistory({
+      from,
+      to,
       id: userID,
       offset: startData,
       limit,
@@ -22,7 +25,6 @@ exports.getUserTransactionHistory = async (req, res) => {
     const totalData = await transactionsModel.getTransactionHistoryCount(
       userID
     );
-    console.log(totalData);
     const totalPages = Math.ceil(totalData / limit);
 
     if (results.length < 1) {

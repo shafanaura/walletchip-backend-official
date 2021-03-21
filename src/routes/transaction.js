@@ -19,9 +19,21 @@ router.get(
 )
 
 router.get(
-  '/transaction-summary',
+  '/transaction-history-today',
   authMiddleware.authCheck,
-  transactionController.getUserTransactionSummary
+  transactionController.getUserTransactionHistoryToday
+)
+
+router.get(
+  '/transaction-history-week',
+  authMiddleware.authCheck,
+  transactionController.getUserTransactionHistoryWeek
+)
+
+router.get(
+  '/transaction-history-month',
+  authMiddleware.authCheck,
+  transactionController.getUserTransactionHistoryMonth
 )
 
 router.post(

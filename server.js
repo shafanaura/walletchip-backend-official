@@ -35,6 +35,17 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
+// setup socket.io
+const server = http.createServer(app);
+const io = socketIo(server, {
+  cors: client.map((origin) => ({ origin })),
+});
+
+io.on("connection", () => {
+  console.log("a user connected");
+});
+app.use(require("./src/middlewares/socket")(io));
+
 // setup static file
 app.use(express.static(path.join(__dirname, "./public")));
 

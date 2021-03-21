@@ -174,6 +174,32 @@ class User extends Database {
     });
   }
 
+  // deleteUserPhoneById (id) {
+  //   return new Promise((resolve, reject) => {
+  //     this.db.query(`
+  //       UPDATE ${this.table}
+  //       SET phone = NULL
+  //       WHERE id=${id}
+  //   `, (err, res, field) => {
+  //       if (err) reject(err)
+  //       resolve(res)
+  //     })
+  //   })
+  // }
+
+  // deleteUserTokenById (id) {
+  //   return new Promise((resolve, reject) => {
+  //     this.db.query(`
+  //       UPDATE ${this.table}
+  //       SET token = NULL
+  //       WHERE id=${id}
+  //   `, (err, res, field) => {
+  //       if (err) reject(err)
+  //       resolve(res)
+  //     })
+  //   })
+  // }
+
   getUserCount(id) {
     const sql = `SELECT COUNT('email') 
                  FROM ${this.table} 

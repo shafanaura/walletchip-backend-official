@@ -12,8 +12,8 @@ const authMiddleware = require("../middlewares/auth");
 const router = express.Router();
 
 router.post(
-  "/auth/pin",
-  authMiddleware.checkId,
+  '/auth/pin',
+  authMiddleware.authCheck,
   authMiddleware.isPinEmpty,
   authMiddleware.isPinNumber,
   authMiddleware.isLength,
@@ -21,7 +21,7 @@ router.post(
 );
 
 router.patch(
-  "/auth/pin/:id",
+  '/auth/pin',
   authMiddleware.authCheck,
   authMiddleware.isPinEmpty,
   authMiddleware.isPinNumber,
@@ -48,7 +48,11 @@ router.post(
 
 router.post("/auth/login", authController.login);
 
-router.patch("/auth/verified/:id", authController.activateAccount);
+router.patch(
+  '/auth/verified',
+  authMiddleware.authCheck,
+  authController.activateAccount
+)
 
 router.post(
   "/auth/password",

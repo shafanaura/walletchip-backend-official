@@ -1,13 +1,14 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.4
+-- version 4.9.5deb2
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost
--- Generation Time: Feb 14, 2021 at 06:57 AM
--- Server version: 10.4.17-MariaDB
--- PHP Version: 8.0.1
+-- Host: localhost:3306
+-- Generation Time: Mar 21, 2021 at 10:20 AM
+-- Server version: 8.0.23-0ubuntu0.20.04.1
+-- PHP Version: 7.4.3
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -28,15 +29,15 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `transactions` (
-  `id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `receiver_id` int(11) NOT NULL,
+  `id` int NOT NULL,
+  `user_id` int NOT NULL,
+  `receiver_id` int NOT NULL,
   `is_transfer` tinyint(1) NOT NULL,
-  `amount` int(11) NOT NULL DEFAULT 0,
+  `amount` int NOT NULL DEFAULT '0',
   `transactionDate` datetime NOT NULL,
   `note` text NOT NULL,
-  `createdAt` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updatedAt` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE current_timestamp()
+  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -84,30 +85,32 @@ INSERT INTO `transactions` (`id`, `user_id`, `receiver_id`, `is_transfer`, `amou
 --
 
 CREATE TABLE `users` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `first_name` varchar(255) DEFAULT NULL,
   `last_name` varchar(255) DEFAULT NULL,
   `username` varchar(100) DEFAULT NULL,
   `email` varchar(255) NOT NULL,
-  `balance` int(11) NOT NULL DEFAULT 0,
+  `balance` int NOT NULL DEFAULT '0',
   `password` varchar(255) NOT NULL,
   `pin` varchar(255) DEFAULT NULL,
   `verified` tinyint(1) NOT NULL,
   `picture` varchar(255) NOT NULL DEFAULT 'no_photo.png',
   `phone` varchar(255) DEFAULT NULL,
-  `createdAt` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updatedAt` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE current_timestamp()
+  `token` varchar(255) DEFAULT NULL,
+  `notification` tinyint(1) NOT NULL,
+  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `first_name`, `last_name`, `username`, `email`, `balance`, `password`, `pin`, `verified`, `picture`, `phone`, `createdAt`, `updatedAt`) VALUES
-(5, 'Sam', 'Dicova', 'samdicova', 'samdicova@gmail.com', 80000, '$2a$08$tBWryWj4kUC89Op1sCCPpO.tRcUtdOoP1zx6AIVr5FsaZT.YMLWIm', '$2a$08$gqqJ78/jfwRTXUhufZ1S2uKDAfCnxwdA4O3zP8ChysaPxrL05kvRm', 1, 'no_photo.png', '+62-895-3261-7640', '2021-02-11 12:57:44', '2021-02-12 16:33:04'),
-(6, NULL, NULL, 'mathiuskormasela', 'mathiuskormasela@gmail.com', 0, '$2a$10$Uy14MRw.42vhutUn63bshu9L6HDT.2cZN7Nn4DLddvI5s3PBo/GKy', '$2a$08$1mNfVjZbllrOx7qrN7xCx.vGfztIUoDA.snJ41XXw0vU2GTqJV.uK', 1, 'picture-1613147192073.JPG', NULL, '2021-02-11 13:19:59', '2021-02-12 16:48:14'),
-(7, 'Mathius', 'Kormasela', 'mathiuskormasela12', 'mathiuskormasela12@gmail.com', 20000, '$2a$08$6OjwdxWNDNYE4k7Dr0PZp.oKJfkG17XW39sCD8JDq21RSpdf/xZAO', '$2a$08$7LVteUvtLmMwRjDHE6VRK.JVbqEXbX7N1jtgKSdw0hw9n3AsXbwem', 1, 'picture-1613142963229.JPG', '089532617640', '2021-02-11 13:21:22', '2021-02-12 16:32:10'),
-(8, 'Evalina', 'Sianturi', 'Evalina', 'evalinasianturi77@gmail.com', 100000, '$2a$10$eE37kbZl6qG6uXw6scjGge6G/hrz.Pg99VbYu72Z66EBJ55VzhOqG', '$2a$08$Fc9KJF4koWVyWdJEOQRV9.JIxLkdjVL27p5KkZ2INJpgc3w81LyXa', 1, 'picture-1613148251542.png', '+62-895-3261-7640', '2021-02-12 16:34:17', '2021-02-12 16:48:14');
+INSERT INTO `users` (`id`, `first_name`, `last_name`, `username`, `email`, `balance`, `password`, `pin`, `verified`, `picture`, `phone`, `token`, `notification`, `createdAt`, `updatedAt`) VALUES
+(5, 'Sam', 'Dicova', 'samdicova', 'samdicova@gmail.com', 80000, '$2a$08$tBWryWj4kUC89Op1sCCPpO.tRcUtdOoP1zx6AIVr5FsaZT.YMLWIm', '$2a$08$gqqJ78/jfwRTXUhufZ1S2uKDAfCnxwdA4O3zP8ChysaPxrL05kvRm', 1, 'no_photo.png', '+62-895-3261-7640', NULL, 0, '2021-02-11 12:57:44', '2021-02-12 16:33:04'),
+(6, NULL, NULL, 'mathiuskormasela', 'mathiuskormasela@gmail.com', 0, '$2a$10$Uy14MRw.42vhutUn63bshu9L6HDT.2cZN7Nn4DLddvI5s3PBo/GKy', '$2a$08$1mNfVjZbllrOx7qrN7xCx.vGfztIUoDA.snJ41XXw0vU2GTqJV.uK', 1, 'picture-1613147192073.JPG', NULL, NULL, 0, '2021-02-11 13:19:59', '2021-02-12 16:48:14'),
+(7, 'Mathius', 'Kormasela', 'mathiuskormasela12', 'mathiuskormasela12@gmail.com', 20000, '$2a$08$6OjwdxWNDNYE4k7Dr0PZp.oKJfkG17XW39sCD8JDq21RSpdf/xZAO', '$2a$08$7LVteUvtLmMwRjDHE6VRK.JVbqEXbX7N1jtgKSdw0hw9n3AsXbwem', 1, 'picture-1613142963229.JPG', '089532617640', NULL, 0, '2021-02-11 13:21:22', '2021-02-12 16:32:10'),
+(8, 'Evalina', 'Sianturi', 'Evalina', 'evalinasianturi77@gmail.com', 100000, '$2a$10$eE37kbZl6qG6uXw6scjGge6G/hrz.Pg99VbYu72Z66EBJ55VzhOqG', '$2a$08$Fc9KJF4koWVyWdJEOQRV9.JIxLkdjVL27p5KkZ2INJpgc3w81LyXa', 1, 'picture-1613148251542.png', '+62-895-3261-7640', NULL, 0, '2021-02-12 16:34:17', '2021-02-12 16:48:14');
 
 --
 -- Indexes for dumped tables
@@ -137,13 +140,24 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `transactions`
 --
 ALTER TABLE `transactions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `transactions`
+--
+ALTER TABLE `transactions`
+  ADD CONSTRAINT `transactions_ibfk_1` FOREIGN KEY (`receiver_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `transactions_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

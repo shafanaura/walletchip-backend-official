@@ -47,10 +47,10 @@ exports.getReceiverDetails = async (req, res) => {
 }
 
 exports.updateUserDetails = async (req, res) => {
-  const userID = req.userData.id
+  const { id } = req.userData
   const data = req.body
   try {
-    const results = await userModel.updateUserDetails(userID, data)
+    const results = await userModel.updateUserDetails(id, data)
     if (results.length < 1) {
       return response(res, 400, false, 'Unknown user')
     } else {
@@ -61,6 +61,21 @@ exports.updateUserDetails = async (req, res) => {
     throw new Error(err)
   }
 }
+
+// exports.deleteUserPhone = async (req, res) => {
+//   const { id } = req.userData
+//   try {
+//     const results = await userModel.deleteUserPhoneById(id)
+//     if (results.length < 1) {
+//       return response(res, 400, false, 'Unknown user')
+//     } else {
+//       return response(res, 200, true, 'User phone deleted successfully')
+//     }
+//   } catch (err) {
+//     response(res, 400, false, 'Failed to delete user phone')
+//     throw new Error(err)
+//   }
+// }
 
 exports.getAllUsers = async (req, res) => {
   const {
@@ -157,9 +172,7 @@ exports.resetPassword = async (req, res) => {
 }
 
 exports.editProfile = async (req, res) => {
-  const {
-    id
-  } = req.params
+  const { id } = req.userData
 
   const {
     firstName,
@@ -174,6 +187,14 @@ exports.editProfile = async (req, res) => {
     if (isUserExists.length < 1) {
       return response(res, 400, false, 'Failed to edit profile, unknown user id')
     } else {
+      const isEmailExists = await userModel.findByCondition({ email })
+      if (isEmailExists.length > 0) {
+        return response(res, 400, false, 'Failed to edit profile, email already used')
+      }
+      const isPhoneExists = await userModel.findByCondition({ phone })
+      if (isPhoneExists.length > 0) {
+        return response(res, 400, false, 'Failed to edit profile, phone already used')
+      }
       try {
         const updateProfile = await userModel.updateByCondition({
           first_name: firstName,
@@ -207,7 +228,7 @@ exports.upload = async (req, res) => {
     }
   } = req
 
-  const { id } = req.params
+  const { id } = req.userData
 
   try {
     const isExists = await userModel.findByCondition({ id })

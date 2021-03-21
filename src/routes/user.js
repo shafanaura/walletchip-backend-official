@@ -47,18 +47,38 @@ router.patch(
 )
 
 router.patch(
-  '/user/:id',
+  '/user',
   authMiddleware.authCheck,
   userMiddleware.checkEditProfile,
   userController.editProfile
 )
 
 router.patch(
-  '/user/picture/:id',
+  '/user/picture',
   authMiddleware.authCheck,
   userMiddleware.checkUploadFile,
   upload,
   userController.upload
+)
+
+// router.patch(
+//   '/phone/delete',
+//   authMiddleware.authCheck,
+//   userMiddleware.checkEditPhone,
+//   userController.updateUserDetails
+// )
+
+router.patch(
+  '/phone/update',
+  authMiddleware.authCheck,
+  userMiddleware.checkEditPhone,
+  userController.updateUserDetails
+)
+
+router.patch(
+  '/token/update',
+  authMiddleware.authCheck,
+  userController.updateUserDetails
 )
 
 module.exports = router

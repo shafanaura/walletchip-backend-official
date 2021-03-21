@@ -9,25 +9,24 @@ const { SECRET, REACT_APP_URL } = process.env
 const userModel = require('../models/User')
 
 exports.createPin = async (req, res) => {
+  const { id } = req.userData
   try {
-    const results = await userModel.findByCondition({
-      id: req.query.id
-    })
+    const results = await userModel.findByCondition(
+      { id }
+    )
 
     if (results.length < 1) {
       return response(res, 400, false, 'Failed to create pin, unknown user id')
     } else {
       try {
-        const results = await userModel.findByCondition({
-          id: req.query.id
-        })
-
+        const results = await userModel.findByCondition(
+          { id })
         if (results[0].pin) {
           return response(res, 400, false, 'Failed to create pin, pin already there')
         } else {
           try {
             const pin = await bcrypt.hash(req.body.pin, 8)
-            const results = await userModel.create(req.query.id, pin)
+            const results = await userModel.create(id, pin)
 
             if (!results) {
               return response(res, 400, false, 'Failed to create pin')
@@ -51,16 +50,16 @@ exports.createPin = async (req, res) => {
 }
 
 exports.changePin = async (req, res) => {
+  const { id } = req.userData
   try {
-    const results = await userModel.findByCondition({
-      id: req.params.id
-    })
+    const results = await userModel.findByCondition(
+      { id })
     if (results.length < 1) {
       return response(res, 400, false, 'Failed to change pin, unknown user id')
     } else {
       try {
         const pin = await bcrypt.hash(req.body.pin, 8)
-        const results = await userModel.create(req.params.id, pin)
+        const results = await userModel.create(id, pin)
         if (!results) {
           return response(res, 400, false, 'Failed to change pin')
         } else {
@@ -87,7 +86,9 @@ exports.register = async (req, res) => {
     const createUser = await userModel.createUserAsync({ verified: 0, username, email, password: encryptedPassword })
     if (createUser.insertId > 0) {
       const { insertId } = createUser
-      const token = jwt.sign({ insertId }, SECRET)
+      const id = insertId
+      const token = jwt.sign({ id }, SECRET)
+      console.log(token)
       mailer(email, 'Link activate Walletchip', `<div> <p>'${REACT_APP_URL}/auth/create-pin/${token}'</p> </div>`)
       return response(res, 200, true, 'Register Success!')
     } else {
@@ -190,7 +191,7 @@ exports.resetPassword = async (req, res) => {
 exports.activateAccount = async (req, res) => {
   const {
     id
-  } = req.params
+  } = req.userData
 
   try {
     const result = await userModel.findByCondition({ id })

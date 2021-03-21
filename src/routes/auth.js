@@ -13,7 +13,7 @@ const router = express.Router()
 
 router.post(
   '/auth/pin',
-  authMiddleware.checkId,
+  authMiddleware.authCheck,
   authMiddleware.isPinEmpty,
   authMiddleware.isPinNumber,
   authMiddleware.isLength,
@@ -21,7 +21,7 @@ router.post(
 )
 
 router.patch(
-  '/auth/pin/:id',
+  '/auth/pin',
   authMiddleware.authCheck,
   authMiddleware.isPinEmpty,
   authMiddleware.isPinNumber,
@@ -51,7 +51,8 @@ router.post(
   authController.login)
 
 router.patch(
-  '/auth/verified/:id',
+  '/auth/verified',
+  authMiddleware.authCheck,
   authController.activateAccount
 )
 

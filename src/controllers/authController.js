@@ -9,19 +9,16 @@ const { SECRET, REACT_APP_URL } = process.env;
 const userModel = require("../models/User");
 
 exports.createPin = async (req, res) => {
-  const { id } = req.userData
+  const { id } = req.query;
   try {
-    const results = await userModel.findByCondition(
-      { id }
-    )
+    const results = await userModel.findByCondition({ id });
 
     if (results.length < 1) {
       return response(res, 400, false, "Failed to create pin, unknown user id");
     } else {
       try {
-        const results = await userModel.findByCondition(
-          { id })
-        
+        const results = await userModel.findByCondition({ id });
+
         if (results[0].pin) {
           return response(
             res,
@@ -31,8 +28,8 @@ exports.createPin = async (req, res) => {
           );
         } else {
           try {
-            const pin = await bcrypt.hash(req.body.pin, 8)
-            const results = await userModel.create(id, pin)
+            const pin = await bcrypt.hash(req.body.pin, 8);
+            const results = await userModel.create(id, pin);
 
             if (!results) {
               return response(res, 400, false, "Failed to create pin");
@@ -61,16 +58,15 @@ exports.createPin = async (req, res) => {
 };
 
 exports.changePin = async (req, res) => {
-  const { id } = req.userData
+  const { id } = req.userData;
   try {
-    const results = await userModel.findByCondition(
-      { id })
+    const results = await userModel.findByCondition({ id });
     if (results.length < 1) {
       return response(res, 400, false, "Failed to change pin, unknown user id");
     } else {
       try {
-        const pin = await bcrypt.hash(req.body.pin, 8)
-        const results = await userModel.create(id, pin)
+        const pin = await bcrypt.hash(req.body.pin, 8);
+        const results = await userModel.create(id, pin);
         if (!results) {
           return response(res, 400, false, "Failed to change pin");
         } else {
@@ -104,8 +100,8 @@ exports.register = async (req, res) => {
     });
     if (createUser.insertId > 0) {
       const { insertId } = createUser;
-      const id = insertId
-      const token = jwt.sign({ id }, SECRET)
+      const id = insertId;
+      const token = jwt.sign({ id }, SECRET);
       verifEmail(
         email,
         token,
@@ -237,9 +233,7 @@ exports.resetPassword = async (req, res) => {
 };
 
 exports.activateAccount = async (req, res) => {
-  const {
-    id
-  } = req.userData
+  const { id } = req.query;
 
   try {
     const result = await userModel.findByCondition({ id });

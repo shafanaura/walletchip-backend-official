@@ -39,6 +39,24 @@ class Transaction extends Database {
     });
   }
 
+  getTransactionLastWeek(id, dateNow, lastWeekDate) {
+    return new Promise((resolve, reject) => {
+      const query = this.db.query(
+        `
+      SELECT * FROM ${this.table}
+      WHERE (user_id=${id} OR receiver_id=${id})
+      AND transactionDate >= '${lastWeekDate}' AND '${dateNow}' >= transactionDate
+      ORDER BY transactionDate ASC
+      `,
+        (err, res, field) => {
+          if (err) reject(err);
+          resolve(res);
+        }
+      );
+      console.log(query.sql);
+    });
+  }
+
   getTransactionHistoryCount(id) {
     const sql = `
     SELECT COUNT (transactions.user_id)

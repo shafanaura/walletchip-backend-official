@@ -59,6 +59,7 @@ app.use("/api", require("./src/routes/auth"));
 app.use("/api", require("./src/routes/user"));
 app.use("/api", require("./src/routes/transaction"));
 app.use("/api", require("./src/routes/redirect"));
+app.use("/api", require("./src/routes/chart"));
 
 app.listen(PORT, () => {
   console.log(`Apps running on port ${PORT}`);

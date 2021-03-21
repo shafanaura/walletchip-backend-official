@@ -1,10 +1,12 @@
 // ======== Server
 // import all modules
 const express = require("express");
+const http = require("http");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const morgan = require("morgan");
 const compression = require("compression");
+const socketIo = require("socket.io");
 const helmet = require("helmet");
 const path = require("path");
 

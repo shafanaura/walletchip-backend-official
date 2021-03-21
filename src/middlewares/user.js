@@ -1,6 +1,6 @@
 // ===== User Middleware
 // import modules
-const { check, param, validationResult } = require('express-validator')
+const { check, validationResult } = require('express-validator')
 const response = require('../helpers/response')
 const config = require('../config/config')
 
@@ -30,8 +30,6 @@ exports.isGetUsersListValid = (req, res, next) => {
 }
 
 exports.checkResetPassword = [
-  param('id', 'Id must be an integer')
-    .isInt(),
   check('currentPassword', "Current password can't be empty")
     .notEmpty(),
   check('newPassword', "New password can't be empty")
@@ -55,9 +53,28 @@ exports.checkResetPassword = [
   }
 ]
 
+exports.checkEditPhone = [
+  check('phone', "Phone number can't be empty")
+    .notEmpty(),
+  check('phone').custom((value, { req }) => {
+    if (value.match(/[^0-9-+]/gi)) {
+      throw new Error('Incorrect phone number')
+    }
+
+    return value
+  }),
+  (req, res, next) => {
+    const errors = validationResult(req)
+
+    if (!errors.isEmpty()) {
+      return response(res, 400, false, errors.array()[0].msg)
+    }
+
+    return next()
+  }
+]
+
 exports.checkEditProfile = [
-  param('id', 'Id must be an integer')
-    .isInt(),
   check('firstName', "First name can't be empty")
     .notEmpty(),
   check('lastName', "Last name can't be empty")
@@ -87,8 +104,6 @@ exports.checkEditProfile = [
 ]
 
 exports.checkUploadFile = [
-  param('id', 'Id must be an integer')
-    .isInt(),
   (req, res, next) => {
     const errors = validationResult(req)
 

@@ -21,6 +21,42 @@ exports.getUserTransactionHistory = async (req, res) => {
     const startData = (limit * page) - limit
     const results = await transactionsModel.getUserTransactionHistory({ id: userID, offset: startData, limit })
     const totalData = await transactionsModel.getTransactionHistoryCount(userID)
+    const totalPages = Math.ceil(totalData / limit)
+
+    if (results.length < 1) {
+      return response(res, 200, true, 'User has no transactional history')
+    } else {
+      const modified = results.map(data => ({
+        user: data.user,
+        another_user: data.another_user,
+        did_user_transfer: data.did_user_transfer,
+        amount: data.amount,
+        transactionDate: data.transactionDate,
+        picture: `${FILE_URL}/${data.picture}`
+      }))
+      return response(res, 200, true, 'User transactionals history list', modified, totalData, totalPages, page, req)
+    }
+  } catch (err) {
+    response(res, 400, false, 'Failed to get user transactional history')
+    console.log(err)
+    throw new Error(err)
+  }
+}
+
+exports.getUserTransactionHistoryToday = async (req, res) => {
+  const userID = req.userData.id
+  const {
+    page = 1,
+    limit = 4
+  } = req.query
+
+  try {
+    const startData = (limit * page) - limit
+    const results = await transactionsModel.getUserTransactionTodayHistory({ id: userID, offset: startData, limit })
+    console.log('ini results.length')
+    console.log(results.length)
+    const totalData = await transactionsModel.getTodayTransactionHistoryCount(userID)
+    console.log('ini total data')
     console.log(totalData)
     const totalPages = Math.ceil(totalData / limit)
 
@@ -44,19 +80,76 @@ exports.getUserTransactionHistory = async (req, res) => {
   }
 }
 
-exports.getUserTransactionSummary = async (req, res) => {
+exports.getUserTransactionHistoryWeek = async (req, res) => {
   const userID = req.userData.id
-  console.log(userID)
+  const {
+    page = 1,
+    limit = 4
+  } = req.query
+
   try {
-    const results = await transactionsModel.getUserTransactionSummary(userID)
+    const startData = (limit * page) - limit
+    const results = await transactionsModel.getUserTransactionWeekHistory({ id: userID, offset: startData, limit })
+    console.log('ini results.length')
+    console.log(results.length)
+    const totalData = await transactionsModel.getWeekTransactionHistoryCount(userID)
+    console.log('ini total data')
+    console.log(totalData)
+    const totalPages = Math.ceil(totalData / limit)
 
     if (results.length < 1) {
       return response(res, 200, true, 'User has no transactional history')
     } else {
-      return response(res, 200, true, 'User transactionals summary list', results)
+      const modified = results.map(data => ({
+        user: data.user,
+        another_user: data.another_user,
+        did_user_transfer: data.did_user_transfer,
+        amount: data.amount,
+        transactionDate: data.transactionDate,
+        picture: `${FILE_URL}/${data.picture}`
+      }))
+      return response(res, 200, true, 'User transactionals history list', modified, totalData, totalPages, page, req)
     }
   } catch (err) {
     response(res, 400, false, 'Failed to get user transactional history')
+    console.log(err)
+    throw new Error(err)
+  }
+}
+
+exports.getUserTransactionHistoryMonth = async (req, res) => {
+  const userID = req.userData.id
+  const {
+    page = 1,
+    limit = 4
+  } = req.query
+
+  try {
+    const startData = (limit * page) - limit
+    const results = await transactionsModel.getUserTransactionMonthHistory({ id: userID, offset: startData, limit })
+    console.log('ini results.length')
+    console.log(results.length)
+    const totalData = await transactionsModel.getMonthTransactionHistoryCount(userID)
+    console.log('ini total data')
+    console.log(totalData)
+    const totalPages = Math.ceil(totalData / limit)
+
+    if (results.length < 1) {
+      return response(res, 200, true, 'User has no transactional history')
+    } else {
+      const modified = results.map(data => ({
+        user: data.user,
+        another_user: data.another_user,
+        did_user_transfer: data.did_user_transfer,
+        amount: data.amount,
+        transactionDate: data.transactionDate,
+        picture: `${FILE_URL}/${data.picture}`
+      }))
+      return response(res, 200, true, 'User transactionals history list', modified, totalData, totalPages, page, req)
+    }
+  } catch (err) {
+    response(res, 400, false, 'Failed to get user transactional history')
+    console.log(err)
     throw new Error(err)
   }
 }

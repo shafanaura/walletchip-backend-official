@@ -312,7 +312,9 @@ exports.editProfile = async (req, res) => {
 
 exports.upload = async (req, res) => {
   const {
-    file: { filename: picture }
+    file: {
+      filename: picture
+    }
   } = req
 
   const { id } = req.userData
@@ -322,29 +324,19 @@ exports.upload = async (req, res) => {
 
     if (isExists.length < 1) {
       deleteFile(picture)
-      return response(
-        res,
-        400,
-        false,
-        'Failed to upload file, unknown user id'
-      )
+      return response(res, 400, false, 'Failed to upload file, unknown user id')
     } else {
       try {
-        const updatePicture = await userModel.updateByCondition(
-          { picture },
-          { id }
-        )
+        const updatePicture = await userModel.updateByCondition({ picture }, { id })
 
         if (!updatePicture) {
           deleteFile(picture)
-          return response(
-            res,
-            400,
-            false,
-            'Failed to upload file, unknown user id'
-          )
+          return response(res, 400, false, 'Failed to upload file, unknown user id')
         } else {
-          return response(res, 200, true, 'Success to upload file')
+          const userPhoto = await userModel.getPhotoByIdAsync(id)
+          const photo = `${FILE_URL}/${userPhoto[0].picture}`
+          console.log(photo)
+          return response(res, 200, true, 'Success to upload file', photo)
         }
       } catch (err) {
         deleteFile(picture)

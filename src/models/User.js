@@ -150,7 +150,7 @@ class User extends Database {
     return new Promise((resolve, reject) => {
       this.db.query(
         `
-      SELECT first_name, last_name, username, balance, picture, phone, email FROM ${this.table} WHERE id=${id}
+      SELECT id, first_name, last_name, username, balance, picture, phone, email FROM ${this.table} WHERE id=${id}
     `,
         (err, res, field) => {
           if (err) reject(err)

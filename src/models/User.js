@@ -29,6 +29,7 @@ class User extends Database {
 
   getUserLastTransactions (data) {
     const sql = `SELECT users1.username AS user,
+    users2.id,
     users2.username AS another_user,
     users2.first_name,
     users2.last_name,

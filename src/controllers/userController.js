@@ -37,7 +37,10 @@ exports.getReceiverDetails = async (req, res) => {
     if (results.length < 1) {
       return response(res, 400, false, "Unknown user");
     } else {
-      return response(res, 200, true, "Receiver details", results[0]);
+      return response(res, 200, true, "Receiver details", {
+        ...results[0],
+        picture: `${FILE_URL}/${results[0].picture}`,
+      });
     }
   } catch (err) {
     response(res, 400, false, "Failed to get receiver details");
@@ -46,10 +49,10 @@ exports.getReceiverDetails = async (req, res) => {
 };
 
 exports.updateUserDetails = async (req, res) => {
-  const { id } = req.userData
-  const data = req.body
+  const { id } = req.userData;
+  const data = req.body;
   try {
-    const results = await userModel.updateUserDetails(id, data)
+    const results = await userModel.updateUserDetails(id, data);
     if (results.length < 1) {
       return response(res, 400, false, "Unknown user");
     } else {
@@ -253,7 +256,7 @@ exports.resetPassword = async (req, res) => {
 };
 
 exports.editProfile = async (req, res) => {
-  const { id } = req.userData
+  const { id } = req.userData;
 
   const { firstName, lastName, email, phone } = req.body;
 
@@ -268,13 +271,23 @@ exports.editProfile = async (req, res) => {
         "Failed to edit profile, unknown user id"
       );
     } else {
-      const isEmailExists = await userModel.findByCondition({ email })
+      const isEmailExists = await userModel.findByCondition({ email });
       if (isEmailExists.length > 0) {
-        return response(res, 400, false, 'Failed to edit profile, email already used')
+        return response(
+          res,
+          400,
+          false,
+          "Failed to edit profile, email already used"
+        );
       }
-      const isPhoneExists = await userModel.findByCondition({ phone })
+      const isPhoneExists = await userModel.findByCondition({ phone });
       if (isPhoneExists.length > 0) {
-        return response(res, 400, false, 'Failed to edit profile, phone already used')
+        return response(
+          res,
+          400,
+          false,
+          "Failed to edit profile, phone already used"
+        );
       }
       try {
         const updateProfile = await userModel.updateByCondition(
@@ -315,7 +328,7 @@ exports.upload = async (req, res) => {
     file: { filename: picture },
   } = req;
 
-  const { id } = req.userData
+  const { id } = req.userData;
 
   try {
     const isExists = await userModel.findByCondition({ id });

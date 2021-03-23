@@ -29,6 +29,7 @@ class User extends Database {
 
   getUserLastTransactions (data) {
     const sql = `SELECT users1.username AS user,
+    users2.id,
     users2.username AS another_user,
     users2.first_name,
     users2.last_name,
@@ -150,7 +151,7 @@ class User extends Database {
     return new Promise((resolve, reject) => {
       this.db.query(
         `
-      SELECT id, first_name, last_name, username, balance, picture, phone, email FROM ${this.table} WHERE id=${id}
+      SELECT id, first_name, last_name, username, balance, picture, phone, email, token, notification FROM ${this.table} WHERE id=${id}
     `,
         (err, res, field) => {
           if (err) reject(err)

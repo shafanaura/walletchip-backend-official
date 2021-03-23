@@ -52,11 +52,7 @@ exports.getUserTransactionHistoryToday = async (req, res) => {
   try {
     const startData = (limit * page) - limit
     const results = await transactionsModel.getUserTransactionTodayHistory({ id: userID, offset: startData, limit })
-    console.log('ini results.length')
-    console.log(results.length)
     const totalData = await transactionsModel.getTodayTransactionHistoryCount(userID)
-    console.log('ini total data')
-    console.log(totalData)
     const totalPages = Math.ceil(totalData / limit)
 
     if (results.length < 1) {
@@ -99,11 +95,7 @@ exports.getUserTransactionHistoryWeek = async (req, res) => {
   try {
     const startData = (limit * page) - limit
     const results = await transactionsModel.getUserTransactionWeekHistory({ id: userID, offset: startData, limit })
-    console.log('ini results.length')
-    console.log(results.length)
     const totalData = await transactionsModel.getWeekTransactionHistoryCount(userID)
-    console.log('ini total data')
-    console.log(totalData)
     const totalPages = Math.ceil(totalData / limit)
 
     if (results.length < 1) {
@@ -136,11 +128,7 @@ exports.getUserTransactionHistoryMonth = async (req, res) => {
   try {
     const startData = (limit * page) - limit
     const results = await transactionsModel.getUserTransactionMonthHistory({ id: userID, offset: startData, limit })
-    console.log('ini results.length')
-    console.log(results.length)
     const totalData = await transactionsModel.getMonthTransactionHistoryCount(userID)
-    console.log('ini total data')
-    console.log(totalData)
     const totalPages = Math.ceil(totalData / limit)
 
     if (results.length < 1) {
@@ -158,6 +146,39 @@ exports.getUserTransactionHistoryMonth = async (req, res) => {
     }
   } catch (err) {
     response(res, 400, false, 'Failed to get user transactional history')
+    console.log(err)
+    throw new Error(err)
+  }
+}
+
+exports.getUserQuickAccess = async (req, res) => {
+  const userID = req.userData.id
+  const {
+    page = 1,
+    limit = 4
+  } = req.query
+
+  try {
+    const startData = (limit * page) - limit
+    const results = await transactionsModel.getUserQuickAccess({ id: userID, offset: startData, limit })
+    const totalData = await transactionsModel.getUserQuickAccessCount(userID)
+    const totalPages = Math.ceil(totalData / limit)
+
+    if (results.length < 1) {
+      return response(res, 200, true, 'User has no quick access')
+    } else {
+      const modified = results.map(data => ({
+        first_name: data.first_name,
+        username: data.username,
+        user_id: data.user_id,
+        phone: data.phone,
+        transactionDate: data.transactionDate,
+        picture: `${FILE_URL}/${data.another_user_picture}`
+      }))
+      return response(res, 200, true, 'User quick access list', modified, totalData, totalPages, page, req)
+    }
+  } catch (err) {
+    response(res, 400, false, 'Failed to get user quick access')
     console.log(err)
     throw new Error(err)
   }

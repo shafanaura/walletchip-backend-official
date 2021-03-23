@@ -19,6 +19,8 @@ router.get(
   userController.getUserDetails
 );
 
+router.get("/user/:id", userController.getUserById);
+
 router.patch(
   "/dashboard/update-profile",
   authMiddleware.authCheck,
@@ -54,14 +56,14 @@ router.patch(
 );
 
 router.patch(
-  '/user',
+  "/user",
   authMiddleware.authCheck,
   userMiddleware.checkEditProfile,
   userController.editProfile
 );
 
 router.patch(
-  '/user/picture',
+  "/user/picture",
   authMiddleware.authCheck,
   userMiddleware.checkUploadFile,
   upload,
@@ -76,16 +78,16 @@ router.patch(
 // )
 
 router.patch(
-  '/phone/update',
+  "/phone/update",
   authMiddleware.authCheck,
   userMiddleware.checkEditPhone,
   userController.updateUserDetails
-)
+);
 
 router.patch(
-  '/token/update',
+  "/token/update",
   authMiddleware.authCheck,
   userController.updateUserDetails
-)
+);
 
 module.exports = router;

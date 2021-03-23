@@ -28,6 +28,26 @@ exports.getUserDetails = async (req, res) => {
   }
 }
 
+exports.getUserById = async (req, res) => {
+  const userID = req.params.id;
+  try {
+    const results = await userModel.getUsersByIdAsync(userID);
+
+    if (results.length < 1) {
+      return response(res, 400, false, "Unknown user");
+    } else {
+      const modified = {
+        ...results[0],
+        picture: `${FILE_URL}/${results[0].picture}`,
+      };
+      return response(res, 200, true, "User details", modified);
+    }
+  } catch (err) {
+    response(res, 400, false, "Failed to get user details");
+    throw new Error(err);
+  }
+};
+
 exports.getReceiverDetails = async (req, res) => {
   const { id } = req.params
 

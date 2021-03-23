@@ -62,6 +62,6 @@ app.use('/api', require('./src/routes/transaction'))
 app.use('/api', require('./src/routes/redirect'))
 app.use('/api', require('./src/routes/chart'))
 
-app.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`Apps running on port ${PORT}`)
 })

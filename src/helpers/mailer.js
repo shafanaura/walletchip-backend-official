@@ -29,8 +29,7 @@ exports.verifEmail = (receiver, token, subject, message) => {
     if (err) {
       throw err;
     }
-
-    console.log(info);
+    console.log("Email sent: ", info);
   });
 };
 
@@ -57,7 +56,6 @@ exports.forgotPassword = (receiver, token, subject, message) => {
     if (err) {
       throw err;
     }
-
-    console.log(info);
+    console.log("Email sent: ", info);
   });
 };

@@ -17,8 +17,8 @@ exports.getIncomeAndExpense = async (req, res) => {
     const results = await transactionsModel.getUserTransactionWeekHistory({
       id: userID,
     });
-    let incomeArr = [];
-    let expenseArr = [];
+    const incomeArr = [];
+    const expenseArr = [];
 
     results.forEach((element) => {
       if (element.did_user_transfer) {
@@ -28,13 +28,13 @@ exports.getIncomeAndExpense = async (req, res) => {
       }
     });
 
-    let income =
+    const income =
       incomeArr.length < 1
         ? 0
         : incomeArr.reduce(
             (accumulator, currentValue) => accumulator + currentValue
           );
-    let expense =
+    const expense =
       expenseArr.length < 1
         ? 0
         : expenseArr.reduce(
@@ -253,7 +253,7 @@ exports.getUserQuickAccess = async (req, res) => {
     const totalPages = Math.ceil(totalData / limit);
 
     if (results.length < 1) {
-      return response(res, 200, true, "User has no quick access");
+      return response(res, 200, true, "User has no quick access", []);
     } else {
       const modified = results.map((data) => ({
         first_name: data.first_name,

@@ -1,77 +1,77 @@
 // ==== import module
-const response = require("../helpers/response");
-const bcrypt = require("bcryptjs");
+const response = require('../helpers/response')
+const bcrypt = require('bcryptjs')
 
 // ===== import models
-const transactionsModel = require("../models/Transaction");
-const usersModel = require("../models/User");
+const transactionsModel = require('../models/Transaction')
+const usersModel = require('../models/User')
 
 // === import helpers
-const { sendNotif } = require("../helpers/firebase");
+const { sendNotif } = require('../helpers/firebase')
 
-const { FILE_URL } = process.env;
+const { FILE_URL } = process.env
 
 exports.getIncomeAndExpense = async (req, res) => {
-  const userID = req.userData.id;
+  const userID = req.userData.id
   try {
     const results = await transactionsModel.getUserTransactionWeekHistory({
-      id: userID,
-    });
-    let incomeArr = [];
-    let expenseArr = [];
+      id: userID
+    })
+    const incomeArr = []
+    const expenseArr = []
 
     results.forEach((element) => {
       if (element.did_user_transfer) {
-        incomeArr.push(element.amount);
+        incomeArr.push(element.amount)
       } else {
-        expenseArr.push(element.amount);
+        expenseArr.push(element.amount)
       }
-    });
+    })
 
-    let income =
+    const income =
       incomeArr.length < 1
         ? 0
         : incomeArr.reduce(
-            (accumulator, currentValue) => accumulator + currentValue
-          );
-    let expense =
+          (accumulator, currentValue) => accumulator + currentValue
+        )
+    const expense =
       expenseArr.length < 1
         ? 0
         : expenseArr.reduce(
-            (accumulator, currentValue) => accumulator + currentValue
-          );
+          (accumulator, currentValue) => accumulator + currentValue
+        )
 
-    return response(res, 200, true, "User Income and Expense", {
+    return response(res, 200, true, 'User Income and Expense', {
       income,
-      expense,
-    });
+      expense
+    })
   } catch (error) {
-    response(res, 400, false, "Failed to get user income and expense");
-    throw new Error(error);
+    response(res, 400, false, 'Failed to get user income and expense')
+    throw new Error(error)
   }
-};
+}
 
 exports.getUserTransactionHistory = async (req, res) => {
-  const userID = req.userData.id;
-  const { page = 1, limit = 4 } = req.query;
-  const { from, to } = req.body;
+  const userID = req.userData.id
+  const { page = 1, limit = 4 } = req.query
+  const { from, to } = req.body
 
   try {
-    const startData = limit * page - limit;
+    const startData = limit * page - limit
     const results = await transactionsModel.getUserTransactionHistory({
       from,
       to,
       id: userID,
       offset: startData,
-      limit,
-    });
+      limit
+    })
     const totalData = await transactionsModel.getTransactionHistoryCount(
       userID
-    );
-    const totalPages = Math.ceil(totalData / limit);
+    )
+    const totalPages = Math.ceil(totalData / limit)
 
     if (results.length < 1) {
-      return response(res, 200, true, "User has no transactional history");
+      return response(res, 200, true, 'User has no transactional history')
     } else {
       const modified = results.map((data) => ({
         user: data.user,
@@ -79,45 +79,45 @@ exports.getUserTransactionHistory = async (req, res) => {
         did_user_transfer: data.did_user_transfer,
         amount: data.amount,
         transactionDate: data.transactionDate,
-        picture: `${FILE_URL}/${data.picture}`,
-      }));
+        picture: `${FILE_URL}/${data.picture}`
+      }))
       return response(
         res,
         200,
         true,
-        "User transactionals history list",
+        'User transactionals history list',
         modified,
         totalData,
         totalPages,
         page,
         req
-      );
+      )
     }
   } catch (err) {
-    response(res, 400, false, "Failed to get user transactional history");
-    console.log(err);
-    throw new Error(err);
+    response(res, 400, false, 'Failed to get user transactional history')
+    console.log(err)
+    throw new Error(err)
   }
-};
+}
 
 exports.getUserTransactionHistoryToday = async (req, res) => {
-  const userID = req.userData.id;
-  const { page = 1, limit = 4 } = req.query;
+  const userID = req.userData.id
+  const { page = 1, limit = 4 } = req.query
 
   try {
-    const startData = limit * page - limit;
+    const startData = limit * page - limit
     const results = await transactionsModel.getUserTransactionTodayHistory({
       id: userID,
       offset: startData,
-      limit,
-    });
+      limit
+    })
     const totalData = await transactionsModel.getTodayTransactionHistoryCount(
       userID
-    );
-    const totalPages = Math.ceil(totalData / limit);
+    )
+    const totalPages = Math.ceil(totalData / limit)
 
     if (results.length < 1) {
-      return response(res, 200, true, "User has no transactional history");
+      return response(res, 200, true, 'User has no transactional history')
     } else {
       const modified = results.map((data) => ({
         user: data.user,
@@ -125,45 +125,45 @@ exports.getUserTransactionHistoryToday = async (req, res) => {
         did_user_transfer: data.did_user_transfer,
         amount: data.amount,
         transactionDate: data.transactionDate,
-        picture: `${FILE_URL}/${data.picture}`,
-      }));
+        picture: `${FILE_URL}/${data.picture}`
+      }))
       return response(
         res,
         200,
         true,
-        "User transactionals history list",
+        'User transactionals history list',
         modified,
         totalData,
         totalPages,
         page,
         req
-      );
+      )
     }
   } catch (err) {
-    response(res, 400, false, "Failed to get user transactional history");
-    console.log(err);
-    throw new Error(err);
+    response(res, 400, false, 'Failed to get user transactional history')
+    console.log(err)
+    throw new Error(err)
   }
-};
+}
 
 exports.getUserTransactionHistoryWeek = async (req, res) => {
-  const userID = req.userData.id;
-  const { page = 1, limit = 4 } = req.query;
+  const userID = req.userData.id
+  const { page = 1, limit = 4 } = req.query
 
   try {
-    const startData = limit * page - limit;
+    const startData = limit * page - limit
     const results = await transactionsModel.getUserTransactionWeekHistory({
       id: userID,
       offset: startData,
-      limit,
-    });
+      limit
+    })
     const totalData = await transactionsModel.getWeekTransactionHistoryCount(
       userID
-    );
-    const totalPages = Math.ceil(totalData / limit);
+    )
+    const totalPages = Math.ceil(totalData / limit)
 
     if (results.length < 1) {
-      return response(res, 200, true, "User has no transactional history");
+      return response(res, 200, true, 'User has no transactional history')
     } else {
       const modified = results.map((data) => ({
         user: data.user,
@@ -171,45 +171,45 @@ exports.getUserTransactionHistoryWeek = async (req, res) => {
         did_user_transfer: data.did_user_transfer,
         amount: data.amount,
         transactionDate: data.transactionDate,
-        picture: `${FILE_URL}/${data.picture}`,
-      }));
+        picture: `${FILE_URL}/${data.picture}`
+      }))
       return response(
         res,
         200,
         true,
-        "User transactionals history list",
+        'User transactionals history list',
         modified,
         totalData,
         totalPages,
         page,
         req
-      );
+      )
     }
   } catch (err) {
-    response(res, 400, false, "Failed to get user transactional history");
-    console.log(err);
-    throw new Error(err);
+    response(res, 400, false, 'Failed to get user transactional history')
+    console.log(err)
+    throw new Error(err)
   }
-};
+}
 
 exports.getUserTransactionHistoryMonth = async (req, res) => {
-  const userID = req.userData.id;
-  const { page = 1, limit = 4 } = req.query;
+  const userID = req.userData.id
+  const { page = 1, limit = 4 } = req.query
 
   try {
-    const startData = limit * page - limit;
+    const startData = limit * page - limit
     const results = await transactionsModel.getUserTransactionMonthHistory({
       id: userID,
       offset: startData,
-      limit,
-    });
+      limit
+    })
     const totalData = await transactionsModel.getMonthTransactionHistoryCount(
       userID
-    );
-    const totalPages = Math.ceil(totalData / limit);
+    )
+    const totalPages = Math.ceil(totalData / limit)
 
     if (results.length < 1) {
-      return response(res, 200, true, "User has no transactional history");
+      return response(res, 200, true, 'User has no transactional history')
     } else {
       const modified = results.map((data) => ({
         user: data.user,
@@ -217,43 +217,43 @@ exports.getUserTransactionHistoryMonth = async (req, res) => {
         did_user_transfer: data.did_user_transfer,
         amount: data.amount,
         transactionDate: data.transactionDate,
-        picture: `${FILE_URL}/${data.picture}`,
-      }));
+        picture: `${FILE_URL}/${data.picture}`
+      }))
       return response(
         res,
         200,
         true,
-        "User transactionals history list",
+        'User transactionals history list',
         modified,
         totalData,
         totalPages,
         page,
         req
-      );
+      )
     }
   } catch (err) {
-    response(res, 400, false, "Failed to get user transactional history");
-    console.log(err);
-    throw new Error(err);
+    response(res, 400, false, 'Failed to get user transactional history')
+    console.log(err)
+    throw new Error(err)
   }
-};
+}
 
 exports.getUserQuickAccess = async (req, res) => {
-  const userID = req.userData.id;
-  const { page = 1, limit = 4 } = req.query;
+  const userID = req.userData.id
+  const { page = 1, limit = 4 } = req.query
 
   try {
-    const startData = limit * page - limit;
+    const startData = limit * page - limit
     const results = await transactionsModel.getUserQuickAccess({
       id: userID,
       offset: startData,
-      limit,
-    });
-    const totalData = await transactionsModel.getUserQuickAccessCount(userID);
-    const totalPages = Math.ceil(totalData / limit);
+      limit
+    })
+    const totalData = await transactionsModel.getUserQuickAccessCount(userID)
+    const totalPages = Math.ceil(totalData / limit)
 
     if (results.length < 1) {
-      return response(res, 200, true, "User has no quick access");
+      return response(res, 200, true, 'User has no quick access', [])
     } else {
       const modified = results.map((data) => ({
         first_name: data.first_name,
@@ -261,84 +261,84 @@ exports.getUserQuickAccess = async (req, res) => {
         user_id: data.user_id,
         phone: data.phone,
         transactionDate: data.transactionDate,
-        picture: `${FILE_URL}/${data.another_user_picture}`,
-      }));
+        picture: `${FILE_URL}/${data.another_user_picture}`
+      }))
       return response(
         res,
         200,
         true,
-        "User quick access list",
+        'User quick access list',
         modified,
         totalData,
         totalPages,
         page,
         req
-      );
+      )
     }
   } catch (err) {
-    response(res, 400, false, "Failed to get user quick access");
-    console.log(err);
-    throw new Error(err);
+    response(res, 400, false, 'Failed to get user quick access')
+    console.log(err)
+    throw new Error(err)
   }
-};
+}
 
 exports.createTransfer = async (req, res) => {
-  const { receiverId, transactionDate, note, amount, pin } = req.body;
+  const { receiverId, transactionDate, note, amount, pin } = req.body
 
-  const { id: userId } = req.userData;
+  const { id: userId } = req.userData
 
   try {
     const pinHashed = await usersModel.findByCondition({
-      id: userId,
-    });
+      id: userId
+    })
 
     if (!(await bcrypt.compare(pin, pinHashed[0].pin))) {
-      return response(res, 400, false, "Wrong pin");
+      return response(res, 400, false, 'Wrong pin')
     } else {
       try {
         const pastBalanceSender = await usersModel.findByCondition({
-          id: userId,
-        });
+          id: userId
+        })
 
         const pastBalanceReceiver = await usersModel.findByCondition({
-          id: receiverId,
-        });
+          id: receiverId
+        })
 
         if (!pastBalanceSender || !pastBalanceReceiver) {
           return response(
             res,
             400,
             false,
-            "Failed to get past balance, unkown id"
-          );
+            'Failed to get past balance, unkown id'
+          )
         } else {
           const balanceMin =
-            Number(pastBalanceSender[0].balance) - Number(amount);
+            Number(pastBalanceSender[0].balance) - Number(amount)
           const balanceMax =
-            Number(pastBalanceReceiver[0].balance) + Number(amount);
+            Number(pastBalanceReceiver[0].balance) + Number(amount)
 
           if (Number(pastBalanceSender[0].balance) < 1) {
-            return response(res, 400, false, "No balance");
+            return response(res, 400, false, 'No balance')
           } else if (Number(pastBalanceSender[0].balance) < Number(amount)) {
-            return response(res, 400, false, "Insufficient balance");
+            return response(res, 400, false, 'Insufficient balance')
           }
 
           try {
             const transferSender = await usersModel.updateByCondition(
               { balance: balanceMin },
               {
-                id: userId,
+                id: userId
               }
-            );
+            )
             const transferReceiver = await usersModel.updateByCondition(
               { balance: balanceMax },
               {
-                id: receiverId,
+                id: receiverId
               }
-            );
+            )
 
             if (!transferReceiver || !transferSender) {
-              return response(res, 400, false, "Failed to transfer");
+              return response(res, 400, false, 'Failed to transfer')
             } else {
               try {
                 const data = [
@@ -348,7 +348,7 @@ exports.createTransfer = async (req, res) => {
                     note,
                     amount,
                     user_id: userId,
-                    is_transfer: 1,
+                    is_transfer: 1
                   },
                   {
                     receiver_id: userId,
@@ -356,77 +356,77 @@ exports.createTransfer = async (req, res) => {
                     note,
                     amount,
                     user_id: receiverId,
-                    is_transfer: 0,
-                  },
-                ];
-                const insertTransaction = await transactionsModel.create(data);
+                    is_transfer: 0
+                  }
+                ]
+                const insertTransaction = await transactionsModel.create(data)
 
                 if (!insertTransaction) {
-                  return response(res, 400, false, "Failed to transfer");
+                  return response(res, 400, false, 'Failed to transfer')
                 } else {
                   try {
                     const receiverData = await usersModel.findByCondition({
-                      id: receiverId,
-                    });
+                      id: receiverId
+                    })
                     if (receiverData[0].token !== null) {
                       sendNotif(
                         receiverData[0].token,
-                        "Transfer",
+                        'Transfer',
                         `Transfer from ${pinHashed[0].username} with a nominal Rp. ${data[0].amount}`,
-                        "HomePage"
-                      );
+                        'HomePage'
+                      )
                     }
-                    return response(res, 200, true, "Transfer Success", {
+                    return response(res, 200, true, 'Transfer Success', {
                       id: insertTransaction,
                       ...req.body,
                       phone: receiverData[0].phone,
                       firstName: receiverData[0].first_name,
                       lastName: receiverData[0].last_name,
                       picture: `${process.env.APP_URL}/uploads/${receiverData[0].picture}`,
-                      pin: undefined,
-                    });
+                      pin: undefined
+                    })
                   } catch (err) {
-                    console.log(err);
+                    console.log(err)
                     return response(
                       res,
                       500,
                       false,
-                      "Failed to get sender data, server errror"
-                    );
+                      'Failed to get sender data, server errror'
+                    )
                   }
                 }
               } catch (err) {
-                console.log(err);
+                console.log(err)
                 return response(
                   res,
                   500,
                   false,
-                  "Failed to transfer, server errror"
-                );
+                  'Failed to transfer, server errror'
+                )
               }
             }
           } catch (err) {
-            console.log(err);
+            console.log(err)
             return response(
               res,
               500,
               false,
-              "Failed to transfer, server errror"
-            );
+              'Failed to transfer, server errror'
+            )
           }
         }
       } catch (err) {
-        console.log(err);
+        console.log(err)
         return response(
           res,
           500,
           false,
-          "Failed to get past balance, server errror"
-        );
+          'Failed to get past balance, server errror'
+        )
       }
     }
   } catch (err) {
-    console.log(err);
-    return response(res, 500, false, "Failed to verify pin, server error");
+    console.log(err)
+    return response(res, 500, false, 'Failed to verify pin, server error')
   }
-};
+}

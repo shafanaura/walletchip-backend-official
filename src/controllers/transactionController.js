@@ -22,9 +22,9 @@ exports.getIncomeAndExpense = async (req, res) => {
 
     results.forEach((element) => {
       if (element.did_user_transfer) {
-        incomeArr.push(element.amount);
-      } else {
         expenseArr.push(element.amount);
+      } else {
+        incomeArr.push(element.amount);
       }
     });
 

@@ -49,4 +49,10 @@ router.post(
   transactionController.createTransfer
 );
 
+router.get(
+  "/transaction-quick-access",
+  authMiddleware.authCheck,
+  transactionController.getUserQuickAccess
+);
+
 module.exports = router;

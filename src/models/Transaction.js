@@ -77,11 +77,12 @@ class Transaction extends Database {
     });
   }
 
-  getUserTransactionTodayHistory (data) {
+  getUserTransactionTodayHistory(data) {
     return new Promise((resolve, reject) => {
-      const today = new Date()
-      const todayString = today.toISOString().split('T')[0]
-      this.db.query(`
+      const today = new Date();
+      const todayString = today.toISOString().split("T")[0];
+      this.db.query(
+        `
       SELECT users1.username AS user,
       users2.username AS another_user,
       transactions.is_transfer AS did_user_transfer,
@@ -94,16 +95,18 @@ class Transaction extends Database {
       WHERE transactions.user_id = ${data.id} AND transactionDate LIKE '%${todayString}%'
       ORDER BY transactionDate DESC
       LIMIT ${data.offset}, ${data.limit}
-    `, (err, res, field) => {
-        if (err) reject(err)
-        resolve(res)
-      })
-    })
+    `,
+        (err, res, field) => {
+          if (err) reject(err);
+          resolve(res);
+        }
+      );
+    });
   }
 
-  getTodayTransactionHistoryCount (id) {
-    const today = new Date()
-    const todayString = today.toISOString().split('T')[0]
+  getTodayTransactionHistoryCount(id) {
+    const today = new Date();
+    const todayString = today.toISOString().split("T")[0];
     const sql = `
     SELECT COUNT (transactions.user_id)
     FROM transactions INNER JOIN
@@ -111,29 +114,32 @@ class Transaction extends Database {
     INNER JOIN users users2 ON users2.id = transactions.receiver_id
     WHERE transactions.user_id = ${id} AND transactionDate LIKE '%${todayString}%'
     ORDER BY transactionDate DESC
-    `
+    `;
     return new Promise((resolve, reject) => {
       this.db.query(sql, (err, results) => {
         if (err) {
-          return reject(err)
+          return reject(err);
         } else {
-          return resolve(Object.values(results[0])[0])
+          return resolve(Object.values(results[0])[0]);
         }
-      })
-    })
+      });
+    });
   }
 
-  getUserTransactionWeekHistory (data) {
+  getUserTransactionWeekHistory(data) {
     return new Promise((resolve, reject) => {
-      const yesterday = new Date()
-      const week = new Date()
-      yesterday.setDate(yesterday.getDate() - 1)
-      const yesterdayString = `${yesterday.toISOString().split('T')[0]}T23:59:59`
-      week.setDate(week.getDate() - 7)
-      const weekString = `${week.toISOString().split('T')[0]}T23:59:59`
-      console.log(yesterdayString)
-      console.log(weekString)
-      this.db.query(`
+      const yesterday = new Date();
+      const week = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const yesterdayString = `${
+        yesterday.toISOString().split("T")[0]
+      }T23:59:59`;
+      week.setDate(week.getDate() - 7);
+      const weekString = `${week.toISOString().split("T")[0]}T23:59:59`;
+      console.log(yesterdayString);
+      console.log(weekString);
+      const query = this.db.query(
+        `
       SELECT users1.username AS user,
       users2.username AS another_user,
       transactions.is_transfer AS did_user_transfer,
@@ -143,26 +149,31 @@ class Transaction extends Database {
       FROM transactions INNER JOIN
       users users1 ON users1.id = transactions.user_id
       INNER JOIN users users2 ON users2.id = transactions.receiver_id
-      WHERE transactions.user_id = ${data.id} AND transactionDate <= '${yesterdayString}'
+      WHERE transactions.user_id = ${
+        data.id
+      } AND transactionDate <= '${yesterdayString}'
       AND transactionDate >= '${weekString}'
       ORDER BY transactionDate DESC
-      LIMIT ${data.offset}, ${data.limit}
-    `, (err, res, field) => {
-        if (err) reject(err)
-        resolve(res)
-      })
-    })
+      ${data.offset && data.limit ? `LIMIT ${data.offset}, ${data.limit}` : ""}
+    `,
+        (err, res, field) => {
+          if (err) reject(err);
+          resolve(res);
+        }
+      );
+      console.log(query.sql);
+    });
   }
 
-  getWeekTransactionHistoryCount (id) {
-    const yesterday = new Date()
-    const week = new Date()
-    yesterday.setDate(yesterday.getDate() - 1)
-    const yesterdayString = `${yesterday.toISOString().split('T')[0]}T23:59:59`
-    week.setDate(week.getDate() - 7)
-    const weekString = `${week.toISOString().split('T')[0]}T23:59:59`
-    console.log(yesterdayString)
-    console.log(weekString)
+  getWeekTransactionHistoryCount(id) {
+    const yesterday = new Date();
+    const week = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayString = `${yesterday.toISOString().split("T")[0]}T23:59:59`;
+    week.setDate(week.getDate() - 7);
+    const weekString = `${week.toISOString().split("T")[0]}T23:59:59`;
+    console.log(yesterdayString);
+    console.log(weekString);
     const sql = `
     SELECT COUNT (transactions.user_id)
     FROM transactions INNER JOIN
@@ -171,29 +182,30 @@ class Transaction extends Database {
     WHERE transactions.user_id = ${id} AND transactionDate <= '${yesterdayString}'
       AND transactionDate >= '${weekString}'
     ORDER BY transactionDate DESC
-    `
+    `;
     return new Promise((resolve, reject) => {
       this.db.query(sql, (err, results) => {
         if (err) {
-          return reject(err)
+          return reject(err);
         } else {
-          return resolve(Object.values(results[0])[0])
+          return resolve(Object.values(results[0])[0]);
         }
-      })
-    })
+      });
+    });
   }
 
-  getUserTransactionMonthHistory (data) {
+  getUserTransactionMonthHistory(data) {
     return new Promise((resolve, reject) => {
-      const month = new Date()
-      const week = new Date()
-      month.setMonth(month.getMonth() - 1)
-      const monthString = `${month.toISOString().split('T')[0]}T23:59:59`
-      week.setDate(week.getDate() - 7)
-      const weekString = `${week.toISOString().split('T')[0]}T23:59:59`
-      console.log(monthString)
-      console.log(weekString)
-      this.db.query(`
+      const month = new Date();
+      const week = new Date();
+      month.setMonth(month.getMonth() - 1);
+      const monthString = `${month.toISOString().split("T")[0]}T23:59:59`;
+      week.setDate(week.getDate() - 7);
+      const weekString = `${week.toISOString().split("T")[0]}T23:59:59`;
+      console.log(monthString);
+      console.log(weekString);
+      this.db.query(
+        `
       SELECT users1.username AS user,
       users2.username AS another_user,
       transactions.is_transfer AS did_user_transfer,
@@ -207,22 +219,24 @@ class Transaction extends Database {
       AND transactionDate >= '${monthString}'
       ORDER BY transactionDate DESC
       LIMIT ${data.offset}, ${data.limit}
-    `, (err, res, field) => {
-        if (err) reject(err)
-        resolve(res)
-      })
-    })
+    `,
+        (err, res, field) => {
+          if (err) reject(err);
+          resolve(res);
+        }
+      );
+    });
   }
 
-  getMonthTransactionHistoryCount (id) {
-    const month = new Date()
-    const week = new Date()
-    month.setMonth(month.getMonth() - 1)
-    const monthString = `${month.toISOString().split('T')[0]}T23:59:59`
-    week.setDate(week.getDate() - 7)
-    const weekString = `${week.toISOString().split('T')[0]}T23:59:59`
-    console.log(monthString)
-    console.log(weekString)
+  getMonthTransactionHistoryCount(id) {
+    const month = new Date();
+    const week = new Date();
+    month.setMonth(month.getMonth() - 1);
+    const monthString = `${month.toISOString().split("T")[0]}T23:59:59`;
+    week.setDate(week.getDate() - 7);
+    const weekString = `${week.toISOString().split("T")[0]}T23:59:59`;
+    console.log(monthString);
+    console.log(weekString);
     const sql = `
     SELECT COUNT (transactions.user_id)
     FROM transactions INNER JOIN
@@ -231,16 +245,16 @@ class Transaction extends Database {
     WHERE transactions.user_id = ${id} AND transactionDate < '${weekString}'
     AND transactionDate >= '${monthString}'
     ORDER BY transactionDate DESC
-    `
+    `;
     return new Promise((resolve, reject) => {
       this.db.query(sql, (err, results) => {
         if (err) {
-          return reject(err)
+          return reject(err);
         } else {
-          return resolve(Object.values(results[0])[0])
+          return resolve(Object.values(results[0])[0]);
         }
-      })
-    })
+      });
+    });
   }
 
   create(data) {

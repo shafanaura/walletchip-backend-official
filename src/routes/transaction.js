@@ -1,46 +1,52 @@
 // ======== Transaction
 // import all modules
-const express = require('express')
+const express = require("express");
 
 // import all controllers
-const transactionController = require('../controllers/transactionController')
+const transactionController = require("../controllers/transactionController");
 
 // import all middlewares
-const authMiddleware = require('../middlewares/auth')
-const transactionMiddleware = require('../middlewares/transaction')
+const authMiddleware = require("../middlewares/auth");
+const transactionMiddleware = require("../middlewares/transaction");
 
 // init router
-const router = express.Router()
+const router = express.Router();
 
 router.get(
-  '/transaction-history',
+  "/transaction",
+  authMiddleware.authCheck,
+  transactionController.getIncomeAndExpense
+);
+
+router.get(
+  "/transaction-history",
   authMiddleware.authCheck,
   transactionController.getUserTransactionHistory
-)
+);
 
 router.get(
-  '/transaction-history-today',
+  "/transaction-history-today",
   authMiddleware.authCheck,
   transactionController.getUserTransactionHistoryToday
-)
+);
 
 router.get(
-  '/transaction-history-week',
+  "/transaction-history-week",
   authMiddleware.authCheck,
   transactionController.getUserTransactionHistoryWeek
-)
+);
 
 router.get(
-  '/transaction-history-month',
+  "/transaction-history-month",
   authMiddleware.authCheck,
   transactionController.getUserTransactionHistoryMonth
-)
+);
 
 router.post(
-  '/transfer',
+  "/transfer",
   authMiddleware.authCheck,
   transactionMiddleware.checkTransactionForm,
   transactionController.createTransfer
-)
+);
 
-module.exports = router
+module.exports = router;
